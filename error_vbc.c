@@ -1,23 +1,30 @@
+// this code is already given you just need to code the following functions found in vbc.c
+// parse_factor - parse_term - parse_expr
+// and you have to modify the following functions unexpected - accept - eval_tree - main
+// read vbc.c and you will understand
+
 #include <stdio.h>
-#include <stdlib.h> // change this to <stdlib.h>
+#include <stdlib.h>
 #include <ctype.h>
 
-typedef struct node {
-    enum {
+typedef struct node
+{
+    enum
+    {
         ADD,
         MULTI,
         VAL
-    }   type;
+    } type;
     int val;
     struct node *l;
     struct node *r;
-}   node;
+} node;
 
 node *p_e(char **s);
-node *p_t(char **s);
 node *p_f(char **s);
+node *p_t(char **s);
 
-node    *new_node(node n)
+node *new_node(node n)
 {
     node *ret = calloc(1, sizeof(n));
     if (!ret)
@@ -26,10 +33,10 @@ node    *new_node(node n)
     return (ret);
 }
 
-void    destroy_tree(node *n)
+void destroy_tree(node *n)
 {
     if (!n)
-        return ;
+        return;
     if (n->type != VAL)
     {
         destroy_tree(n->l);
@@ -38,12 +45,12 @@ void    destroy_tree(node *n)
     free(n);
 }
 
-void    unexpected(char c)
+void unexpected(char c)
 {
     if (c)
         printf("Unexpected token '%c'\n", c);
     else
-        printf("Unexpected end of input\n");
+        printf("Unexpexted end of input\n");
     exit(1);
 }
 
@@ -65,92 +72,88 @@ int expect(char **s, char c)
     return (0);
 }
 
-//...
-
-node    *p_e(char **s)
+node *p_e(char **s)
 {
     node *left = p_t(s);
-    if(!left)
+    if (!left)
         return NULL;
-    while (accept(s,'+'))
+    while (accept(s, '+'))
     {
         node *right = p_t(s);
-        if(!right)
+        if (!right)
         {
             destroy_tree(left);
             return NULL;
         }
         node n = (node){ADD,0,left,right};
         left = new_node(n);
-        if(!left)
+        if (!left)
         {
             destroy_tree(right);
             return NULL;
         }
     }
-    return (left);
+    return left;
 }
 
-
-node    *p_f(char **s)
+node *p_f(char **s)
 {
     if(isdigit(**s))
     {
         node n = (node){VAL,**s - '0',NULL,NULL};
         (*s)++;
-        return (new_node(n));
+        return new_node(n);
     }
     if(accept(s,'('))
     {
-        node *n = p_e(s);
+        node *node = p_e(s);
         if(!expect(s,')'))
         {
-            destroy_tree(n);
+            destroy_tree(node);
             return NULL;
         }
-        return n ;
+        return node;
     }
     unexpected(**s);
     return NULL;
 }
 
-
-node    *p_t(char **s)
+node *p_t(char **s)
 {
-    node *left = p_f(s);
-    if(!left)
+        node *left = p_f(s);
+    if (!left)
         return NULL;
-    while (accept(s,'*'))
+    while (accept(s, '*'))
     {
         node *right = p_f(s);
-        if(!right)
+        if (!right)
         {
             destroy_tree(left);
             return NULL;
         }
         node n = (node){MULTI,0,left,right};
         left = new_node(n);
-        if(!left)
+        if (!left)
         {
             destroy_tree(right);
             return NULL;
         }
     }
-    return (left);
+    return left;
 }
 
 int eval_tree(node *tree)
 {
     switch (tree->type)
     {
-        case ADD:
-            return (eval_tree(tree->l) + eval_tree(tree->r));
-        case MULTI:
-            return (eval_tree(tree->l) * eval_tree(tree->r));
-        case VAL:
-            return (tree->val);
+    case ADD:
+        return (eval_tree(tree->l) + eval_tree(tree->r));
+    case MULTI:
+        return (eval_tree(tree->l) * eval_tree(tree->r));
+    case VAL:
+        return (tree->val);
     }
-    return (0);
+    return 0;
 }
 
 int main(int argc, char **argv)
@@ -165,6 +168,7 @@ int main(int argc, char **argv)
             unexpected(*s);
         else
             unexpected(0);
+
         return (1);
     }
     printf("%d\n", eval_tree(tree));

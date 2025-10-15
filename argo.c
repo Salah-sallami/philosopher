@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 
-// ✅ بدلنا <malloc.h> بـ <stdlib.h>
+// ✅  <malloc.h>  <stdlib.h>
 #include <stdlib.h>
 
 typedef struct	json {
@@ -28,7 +28,7 @@ typedef struct	pair {
 }	pair;
 
 
-// ✅ تزادو هاد التصريحات باش نعرفو الfunctions قبل مانستعملوهم
+// function
 int		argo(json *dst, FILE *stream);
 int		parser(json *dst, FILE *stream);
 int		parse_int(json *dst, FILE *stream);
@@ -125,7 +125,7 @@ void	serialize(json j)
 }
 
 
-// ✅ Function جديدة: كتعرف نوع القيمة (string/int/map)
+// ✅ Function(string/int/map)
 int parser(json *dst, FILE *stream)
 {
 	int	c;
@@ -144,7 +144,7 @@ int parser(json *dst, FILE *stream)
 	}
 }
 
-// ✅ Function جديدة: كتقرا int من stream
+// ✅ Function stream
 int parse_int(json *dst, FILE *stream)
 {
 	int	n;
@@ -159,7 +159,7 @@ int parse_int(json *dst, FILE *stream)
 	return (-1);
 }
 
-// ✅ Function جديدة: كتقرا string بين "
+// ✅ Function string  "
 int parse_string(json *dst, FILE *stream)
 {
 	char	buffer[4096];
@@ -192,19 +192,20 @@ int parse_string(json *dst, FILE *stream)
 	}
 	buffer[i] = '\0';
 	dst->type = STRING;
-	dst->string = strdup(buffer); // ✅ كتستعمل strdup (من <stdlib.h>)
+	dst->string = strdup(buffer); // ✅strdup ( <stdlib.h>)
 	return (1);
 }
 
-// ✅ Function جديدة: كتقرا JSON object { key: value, ... }
+// ✅ Function JSON object { key: value, ... }
 int parse_map(json *dst, FILE *stream)
 {
+	if (!expect(stream, '{'))
+		return (-1);
+	
 	pair	*items;
 	size_t	size;
 	json	key;
 
-	if (!expect(stream, '{'))
-		return (-1);
 	items = NULL;
 	size = 0;
 	while (!accept(stream, '}'))
@@ -242,7 +243,7 @@ int parse_map(json *dst, FILE *stream)
 	return (1);
 }
 
-// ✅ بدلنا argo: دابا كيستعمل parser
+// ✅  argo: parser
 int argo(json *dst, FILE *stream)
 {
 	return (parser(dst, stream));
@@ -256,7 +257,7 @@ int	main(int argc, char **argv)
 	char *filename = argv[1];
 	FILE *stream = fopen(filename, "r");
 	json	file;
-	if (argo (&file, stream) != 1)
+	if (parser (&file, stream) != 1)
 	{
 		free_json(file);
 		return 1;
