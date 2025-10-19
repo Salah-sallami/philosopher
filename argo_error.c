@@ -2,7 +2,8 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
-// #include <malloc.h> // change this to <stdlib.h>
+#include <stdlib.h> // change this to <stdlib.h>   
+
 
 
 typedef struct	json {
@@ -28,6 +29,10 @@ typedef struct	pair {
 
 void	free_json(json j);
 int	argo(json *dst, FILE *stream);
+int	parser(json *dst, FILE *stream);
+int	parse_int(json *dst, FILE *stream);
+int	parse_string(json *dst, FILE *stream);
+int	parse_map(json *dst, FILE *stream);
 
 int	peek(FILE *stream)
 {
@@ -112,6 +117,27 @@ void	serialize(json j)
 			putchar('}');
 			break ;
 	}
+}
+
+int parser(json *dst, FILE *stream)
+{
+	int c;
+	c = peek(stream);
+	if( c == '"')
+		return (parse_string(dst,stream))
+	if else(isdigit(c) || c == '-')
+		return (parse_int(dst,stream))
+	if else (c == '{')
+		return (parse_map(dst,stream))
+	else
+	{
+		unexpected(stream);
+		return(-1);
+	}
+}
+int parse_string(json *dst, FILE *stream)
+{
+
 }
 
 int	main(int argc, char **argv)
